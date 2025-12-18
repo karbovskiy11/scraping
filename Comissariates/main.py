@@ -51,39 +51,36 @@ def save_csv(data):
         writer = csv.writer(csv_file, delimiter=',')
         writer.writerows(data)
 
+def clean_data(data):
+    clean_info = re.sub(r'<[^>]+>', '', data)
+    return clean_info
+
 
 def main():
     api_url = 'https://mil.ru/api/ssp-maps/992a7991-05f0-433c-988f-ff28c9a1aaa8'
-    # headers = {
-    #     'accept': 'application/json',
-    #     'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0'
-    # }
-    # idd = 0
-    # id_comissariates = get_json(api_url)
+
+    id_comissariates = get_json(api_url)
     name = 'id'
-    # save_json(name, id_comissariates['data']['points'])
+    save_json(name, id_comissariates['data']['points'])
     id_date = load_date(name)
     id_comissariates = get_id(id_date)
 
     spisok_comissariates = []
-    # idd = 1
+
     count = 0
     for item in id_comissariates:
         if count < 4:
             point = get_json(item)
-            # spisok = {
+            # spisok_json = {
             #         'type': point['data']['type'],
             #         'title': point['data']['title'],
             #         'info': point['data']['text_before'],
             # }
 
-            point_info = point['data']['text_before']
-            clean_info = re.sub(r'<[^>]+>', '', point_info)
             spisok = [
                     point['data']['type'],
                     point['data']['title'],
-                    clean_info
-
+                    clean_data(point['data']['text_before'])
             ]
 
             spisok_comissariates.append(spisok)
@@ -96,7 +93,7 @@ def main():
 
 
     name = 'spisok'
-    # save_json(name, spisok_comissariates)
+    save_json(name, spisok_comissariates)
     save_csv(spisok_comissariates)
 
 
