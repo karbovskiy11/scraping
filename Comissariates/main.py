@@ -76,11 +76,24 @@ def main():
             #         'title': point['data']['title'],
             #         'info': point['data']['text_before'],
             # }
+            data_type = point['data']['type']
+            data_title = point['data']['title']
 
+            data_info = [clean_data(i) for i in point['data']['text_before'].split('<br>')]
+            try:
+                data_time = data_info[2]
+            except:
+                data_time = 'Информация отсутствует'
+            print(data_info)
+            # data_info = clean_data(data_info)
             spisok = [
-                    point['data']['type'],
-                    point['data']['title'],
-                    clean_data(point['data']['text_before'])
+                    data_type,
+                    data_title,
+                    data_info[0],
+                    data_info[1],
+                    data_time
+                    # clean_data(point['data']['text_before'].split('<br>'))
+
             ]
 
             spisok_comissariates.append(spisok)
