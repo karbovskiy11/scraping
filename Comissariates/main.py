@@ -37,7 +37,7 @@ def get_json(url):
 
 def save_json(name, data):
     os.makedirs('data', exist_ok=True)
-    with open(f'data/{name}_comissariates.json', 'w', encoding='utf-8') as json_file:
+    with open(f'data/{name}_commissariates.json', 'w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
 
 
