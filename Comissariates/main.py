@@ -14,9 +14,9 @@ def get_json(url):
     try:
         warnings.simplefilter('ignore', InsecureRequestWarning)
         response = requests.get(url=url, verify=False, timeout=5)
+        time.sleep(random.randrange(2, 5))
         if response.status_code == 200:
             print(f"✓ API доступен: код {response.status_code}")
-            return response.json()
         elif response.status_code in [401, 403]:
             print(f"⚠ API требует аутентификации: {response.status_code}")
         elif response.status_code == 404:
@@ -25,12 +25,14 @@ def get_json(url):
             print(f"✗ Проблемы с сервером: {response.status_code}")
         else:
             print(f"? Неожиданный статус: {response.status_code}")
+        return response.json()
     except requests.exceptions.ConnectionError:
         print("✗ Не удалось подключиться к API")
     except requests.exceptions.Timeout:
         print("✗ Таймаут при подключении к API")
     except requests.exceptions.RequestException as e:
         print(f"✗ Ошибка: {e}")
+
 
 
 def save_json(name, data):
@@ -87,8 +89,9 @@ def clean_symbol(data):
 
 def main():
     api_url = 'https://mil.ru/api/ssp-maps/992a7991-05f0-433c-988f-ff28c9a1aaa8'
-    if get_json(api_url):
-        id_comissariates = get_json(api_url)
+    id_comissariates = get_json(api_url)
+    if id_comissariates:
+        print(f'id военкоматов получены.')
         name = 'id'
         save_json(name, id_comissariates['data']['points'])
         id_date = load_date()
@@ -100,6 +103,9 @@ def main():
         for item in id_comissariates:
         # if count < 4:
             point = get_json(item)
+            if point is not True:
+                print(f'Данные от военкомата № {count} не получены.')
+                break
             data_type = point['data']['type']
             data_title = point['data']['title']
             data_info = [clean_symbol(i) for i in point['data']['text_before'].split('<br>') if i != '']
@@ -131,7 +137,7 @@ def main():
             save_in_csv(spisok)
             name = 'spisok'
             count += 1
-            time.sleep(random.randrange(2, 4))
+
         # else:
         #     break
 
